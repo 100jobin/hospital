@@ -1,29 +1,24 @@
-const { MongoClient } = require('mongodb');
+
+const MongoClient = require('mongodb').MongoClient;
 
 const state = {
     db: null
 };
 
 module.exports.connect = async function (done) {
-    const url = 'mongodb+srv://Jobin:bIOq7XvrlmdTyR3G@cluster0.efxy5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+    const url = 'mongodb://127.0.0.1:27017';
     const dbName = 'shopping';
 
     try {
-        // Connect to the MongoDB cluster
-        const client = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
-        state.db = client.db(dbName); // Assign the database instance to state
-        console.log('Database connected successfully');
-        if (done) done(); // Callback after successful connection
+        const client = await MongoClient.connect(url);
+        state.db = client.db(dbName);
+        done();
     } catch (err) {
-        console.error('Database connection error:', err);
-        if (done) done(err); // Callback with error
+        done(err);
     }
 };
 
 module.exports.get = function () {
-    if (!state.db) {
-        throw new Error('Database not initialized. Call connect() first.');
-    }
     return state.db;
 };
 
